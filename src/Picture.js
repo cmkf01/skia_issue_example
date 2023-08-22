@@ -1,7 +1,6 @@
 import {Group, Image, rect} from '@shopify/react-native-skia';
 import React from 'react';
 import {Dimensions} from 'react-native';
-import PropTypes from 'prop-types';
 
 const {width, height} = Dimensions.get('window');
 
@@ -20,10 +19,4 @@ export const Picture = ({image, matrix}) => {
       />
     </Group>
   );
-};
-
-Picture.propTypes = {
-  matrix: PropTypes.any,
-  image: PropTypes.object.isRequired,
-  isExpanded: PropTypes.bool,
 };

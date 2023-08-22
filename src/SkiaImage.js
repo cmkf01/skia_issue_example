@@ -1,6 +1,5 @@
 import React from 'react';
 import {Canvas, useImage, Skia} from '@shopify/react-native-skia';
-import PropTypes from 'prop-types';
 import {useSharedValue} from 'react-native-reanimated';
 import {Picture, PictureDimensions} from './Picture';
 import GestureHandler from './GestureHandler';
@@ -32,11 +31,6 @@ const SkiaImage = ({imageUri, canManipulate}) => {
       />
     </View>
   );
-};
-
-SkiaImage.propTypes = {
-  imageUri: PropTypes.number.isRequired,
-  canManipulate: PropTypes.bool,
 };
 
 export default SkiaImage;

@@ -6,7 +6,6 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import {toM4, translate, scale} from './MatrixHelpers';
-import {PropTypes} from 'prop-types';
 
 const GestureHandler = ({matrix, dimensions, debug}) => {
   const {x, y, width, height} = dimensions;
@@ -53,14 +52,6 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
       <Animated.View style={style} />
     </GestureDetector>
   );
-};
-
-GestureHandler.propTypes = {
-  dimensions: PropTypes.object.isRequired,
-  debug: PropTypes.bool,
-  matrix: PropTypes.shape({
-    current: PropTypes.object,
-  }).isRequired,
 };
 
 export default GestureHandler;
