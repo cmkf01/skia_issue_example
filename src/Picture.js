@@ -15,7 +15,7 @@ export const Picture = ({image, matrix}) => {
         width={width}
         height={height}
         image={image}
-        fit="cover"
+        fit="contain"
       />
     </Group>
   );

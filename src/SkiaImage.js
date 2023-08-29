@@ -1,13 +1,23 @@
 import React from 'react';
-import {Canvas, useImage, Skia} from '@shopify/react-native-skia';
-import {useSharedValue} from 'react-native-reanimated';
+import {
+  Canvas,
+  useImage,
+  Skia,
+  Path,
+  useCanvasRef,
+} from '@shopify/react-native-skia';
+import Animated, {useSharedValue} from 'react-native-reanimated';
 import {Picture, PictureDimensions} from './Picture';
 import GestureHandler from './GestureHandler';
-import {Dimensions, View} from 'react-native';
+import {Dimensions} from 'react-native';
+import {useLinePathContext} from './LinePathContext';
 
 const {width, height} = Dimensions.get('window');
 
-const SkiaImage = ({imageUri, canManipulate}) => {
+const SkiaImage = ({style, imageUri}) => {
+  const ref = useCanvasRef();
+  const {LinePaths} = useLinePathContext();
+
   const skImage = useImage(imageUri);
   const pictureMatrix = useSharedValue(Skia.Matrix());
 
@@ -16,20 +26,25 @@ const SkiaImage = ({imageUri, canManipulate}) => {
   }
 
   return (
-    <View>
+    <Animated.View style={style}>
       <Canvas
+        ref={ref}
         style={{
-          width: width,
-          height: height,
+          width,
+          height,
         }}>
         <Picture image={skImage} matrix={pictureMatrix} />
+        {Array.isArray(LinePaths) &&
+          LinePaths.map((value, index) => (
+            <Path key={index} path={value.path} paint={value.paint} />
+          ))}
       </Canvas>
       <GestureHandler
         matrix={pictureMatrix}
         dimensions={PictureDimensions}
         debug={true}
       />
-    </View>
+    </Animated.View>
   );
 };
 
