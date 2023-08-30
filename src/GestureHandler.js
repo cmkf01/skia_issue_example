@@ -5,7 +5,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import {toM4, translate, scale} from './MatrixHelpers';
+import {
+  toM4,
+  translate,
+  scale,
+  transformPointWithInvertedMatrix,
+} from './MatrixHelpers';
 import {paint} from './Paint';
 import {useLinePathContext} from './LinePathContext';
 
@@ -39,11 +44,20 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
     .maxPointers(1)
     .onStart(e => {
       currentPath.current = Skia.Path.Make();
-      currentPath.current.moveTo(e.x, e.y);
+      const [transformedX, transformedY] = transformPointWithInvertedMatrix(
+        matrix.value,
+        e.x,
+        e.y,
+      );
+      currentPath.current.moveTo(transformedX, transformedY);
     })
     .onChange(e => {
-      console.log(e);
-      currentPath.current.lineTo(e.x, e.y);
+      const [transformedX, transformedY] = transformPointWithInvertedMatrix(
+        matrix.value,
+        e.x,
+        e.y,
+      );
+      currentPath.current.lineTo(transformedX, transformedY);
     })
     .onEnd(() => {
       const pathToDraw = {path: currentPath.current, paint: paint};
@@ -71,7 +85,7 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
     };
   });
 
-  const gesture = Gesture.Race(drawGesture, Gesture.Simultaneous(pinch, pan));
+  const gesture = Gesture.Race(drawGesture, Gesture.Race(pinch, pan));
 
   return (
     <GestureDetector gesture={gesture}>

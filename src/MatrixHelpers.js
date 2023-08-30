@@ -1,5 +1,20 @@
 import {Skia, MatrixIndex} from '@shopify/react-native-skia';
 
+const decomposeMatrix = matrix => {
+  'worklet';
+  return {
+    tx: matrix[MatrixIndex.TransX],
+    ty: matrix[MatrixIndex.TransY],
+    sx: matrix[MatrixIndex.ScaleX],
+    sy: matrix[MatrixIndex.ScaleY],
+    skewX: matrix[MatrixIndex.SkewX],
+    skewY: matrix[MatrixIndex.SkewY],
+    persp0: matrix[MatrixIndex.Persp0],
+    persp1: matrix[MatrixIndex.Persp1],
+    persp2: matrix[MatrixIndex.Persp2],
+  };
+};
+
 export const scale = (matrix, s, origin) => {
   'worklet';
   const source = Skia.Matrix(matrix.get());
@@ -19,16 +34,9 @@ export const translate = (matrix, x, y) => {
 
 export const toM4 = m3 => {
   'worklet';
-  const m = m3.get();
-  const tx = m[MatrixIndex.TransX];
-  const ty = m[MatrixIndex.TransY];
-  const sx = m[MatrixIndex.ScaleX];
-  const sy = m[MatrixIndex.ScaleY];
-  const skewX = m[MatrixIndex.SkewX];
-  const skewY = m[MatrixIndex.SkewY];
-  const persp0 = m[MatrixIndex.Persp0];
-  const persp1 = m[MatrixIndex.Persp1];
-  const persp2 = m[MatrixIndex.Persp2];
+  const decomposedMatrix = decomposeMatrix(m3.get());
+  const {sx, skewY, skewX, sy, persp0, persp1, persp2, tx, ty} =
+    decomposedMatrix;
   return [
     sx,
     skewY,
@@ -47,4 +55,32 @@ export const toM4 = m3 => {
     persp2,
     1,
   ];
+};
+
+export const invertMatrix = matrix => {
+  'worklet';
+  const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(matrix.get());
+
+  const det = sx * sy - skewY * skewX;
+  if (Math.abs(det) < 1e-10) {
+    return null; // matrix is not invertible
+  }
+
+  const invDet = 1.0 / det;
+  const inverted = Skia.Matrix();
+  inverted.concat([
+    sy * invDet,
+    -skewY * invDet,
+    -skewX * invDet,
+    sx * invDet,
+    (skewX * ty - sy * tx) * invDet,
+    (skewY * tx - sx * ty) * invDet,
+  ]);
+  return inverted;
+};
+
+export const transformPointWithInvertedMatrix = (matrix, x, y) => {
+  const invertedMatrix = invertMatrix(matrix);
+  const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(invertedMatrix.get());
+  return [sx * x + skewX * y + tx, skewY * x + sy * y + ty];
 };

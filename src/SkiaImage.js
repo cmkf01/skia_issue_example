@@ -5,6 +5,7 @@ import {
   Skia,
   Path,
   useCanvasRef,
+  Group,
 } from '@shopify/react-native-skia';
 import Animated, {useSharedValue} from 'react-native-reanimated';
 import {Picture, PictureDimensions} from './Picture';
@@ -20,6 +21,7 @@ const SkiaImage = ({style, imageUri}) => {
 
   const skImage = useImage(imageUri);
   const pictureMatrix = useSharedValue(Skia.Matrix());
+  const invertedMatrix = Skia.Matrix();
 
   if (!skImage) {
     return null;
@@ -36,13 +38,15 @@ const SkiaImage = ({style, imageUri}) => {
         <Picture image={skImage} matrix={pictureMatrix} />
         {Array.isArray(LinePaths) &&
           LinePaths.map((value, index) => (
-            <Path key={index} path={value.path} paint={value.paint} />
+            <Group key={index} transform={{matrix: invertedMatrix}}>
+              <Path key={index} path={value.path} paint={value.paint} />
+            </Group>
           ))}
       </Canvas>
       <GestureHandler
         matrix={pictureMatrix}
         dimensions={PictureDimensions}
-        debug={true}
+        debug={false}
       />
     </Animated.View>
   );
