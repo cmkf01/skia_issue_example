@@ -43,12 +43,12 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
     .minPointers(1)
     .maxPointers(1)
     .onStart(e => {
-      currentPath.current = Skia.Path.Make();
       const [transformedX, transformedY] = transformPointWithInvertedMatrix(
         matrix.value,
         e.x,
         e.y,
       );
+      currentPath.current = Skia.Path.Make();
       currentPath.current.moveTo(transformedX, transformedY);
     })
     .onChange(e => {
@@ -57,6 +57,7 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
         e.x,
         e.y,
       );
+      console.log('transformedX', transformedX, 'transformedY', transformedY);
       currentPath.current.lineTo(transformedX, transformedY);
     })
     .onEnd(() => {
@@ -85,7 +86,7 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
     };
   });
 
-  const gesture = Gesture.Race(drawGesture, Gesture.Race(pinch, pan));
+  const gesture = Gesture.Race(drawGesture, Gesture.Simultaneous(pinch, pan));
 
   return (
     <GestureDetector gesture={gesture}>

@@ -57,26 +57,42 @@ export const toM4 = m3 => {
   ];
 };
 
+let lastMatrix = null;
+let cachedInverse = null;
+
 export const invertMatrix = matrix => {
   'worklet';
-  const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(matrix.get());
+  // so the inverse matrix is not calculated every frame of .onChange()
+  if (lastMatrix && lastMatrix === matrix) {
+    return cachedInverse;
+  }
 
+  const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(matrix.get());
+  console.log('Matrix decomposed if sx:', sx);
   const det = sx * sy - skewY * skewX;
   if (Math.abs(det) < 1e-10) {
     return null; // matrix is not invertible
   }
-
   const invDet = 1.0 / det;
-  const inverted = Skia.Matrix();
-  inverted.concat([
+  const inv = [
     sy * invDet,
     -skewY * invDet,
     -skewX * invDet,
     sx * invDet,
     (skewX * ty - sy * tx) * invDet,
     (skewY * tx - sx * ty) * invDet,
-  ]);
-  return inverted;
+    0,
+    0,
+    1,
+  ];
+  const invertedSkMatrix = Skia.Matrix();
+  invertedSkMatrix.concat(inv);
+  console.log(typeof invertedSkMatrix);
+
+  lastMatrix = matrix;
+  cachedInverse = invertedSkMatrix;
+
+  return invertedSkMatrix;
 };
 
 export const transformPointWithInvertedMatrix = (matrix, x, y) => {
