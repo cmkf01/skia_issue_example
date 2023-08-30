@@ -1,4 +1,4 @@
-import {Skia, MatrixIndex, Path2DPathEffect} from '@shopify/react-native-skia';
+import {Skia, MatrixIndex} from '@shopify/react-native-skia';
 
 export const scale = (matrix, s, origin) => {
   'worklet';
