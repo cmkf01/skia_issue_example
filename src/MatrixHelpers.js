@@ -1,7 +1,7 @@
-import {Skia, MatrixIndex} from '@shopify/react-native-skia';
+import { Skia, MatrixIndex } from "@shopify/react-native-skia";
 
 const decomposeMatrix = matrix => {
-  'worklet';
+  "worklet";
   return {
     tx: matrix[MatrixIndex.TransX],
     ty: matrix[MatrixIndex.TransY],
@@ -16,7 +16,7 @@ const decomposeMatrix = matrix => {
 };
 
 export const scale = (matrix, s, origin) => {
-  'worklet';
+  "worklet";
   const source = Skia.Matrix(matrix.get());
   source.translate(origin.x, origin.y);
   source.scale(s, s);
@@ -25,7 +25,7 @@ export const scale = (matrix, s, origin) => {
 };
 
 export const translate = (matrix, x, y) => {
-  'worklet';
+  "worklet";
   const m = Skia.Matrix();
   m.translate(x, y);
   m.concat(matrix);
@@ -33,16 +33,16 @@ export const translate = (matrix, x, y) => {
 };
 
 export const move = (x, y) => {
-  'worklet';
+  "worklet";
   const p = Skia.Path.Make();
   p.moveTo(x, y);
   return p;
 };
 
 export const toM4 = m3 => {
-  'worklet';
+  "worklet";
   const decomposedMatrix = decomposeMatrix(m3.get());
-  const {sx, skewY, skewX, sy, persp0, persp1, persp2, tx, ty} =
+  const { sx, skewY, skewX, sy, persp0, persp1, persp2, tx, ty } =
     decomposedMatrix;
   return [
     sx,

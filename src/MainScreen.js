@@ -1,12 +1,12 @@
-import React from 'react';
-import {Button, StyleSheet, View} from 'react-native';
-import SkiaImage from './SkiaImage';
-import {useLinePathContext} from './LinePathContext';
-import {SkiaView} from '@shopify/react-native-skia';
+import React from "react";
+import { Button, StyleSheet, View } from "react-native";
+import SkiaImage from "./SkiaImage";
+import { useLinePathContext } from "./LinePathContext";
+import { SkiaView } from "@shopify/react-native-skia";
 
 const MainScreen = () => {
-  const image = require('./zurich.jpg');
-  const {clearLinePaths, popLinePath} = useLinePathContext();
+  const image = require("./zurich.jpg");
+  const { clearLinePaths, popLinePath } = useLinePathContext();
 
   return (
     <>
@@ -30,9 +30,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 8,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "space-around",
+    alignItems: "center",
+    flexDirection: "row",
   },
 });
 

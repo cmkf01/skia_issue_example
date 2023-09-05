@@ -1,14 +1,19 @@
-import React, {createContext, useCallback, useContext, useReducer} from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useReducer,
+} from "react";
 
 const LinePathContext = createContext(null);
 
 const LinePathReducer = (LinePaths, action) => {
   switch (action.type) {
-    case 'add':
+    case "add":
       return [...LinePaths, action.LinePath];
-    case 'clear':
+    case "clear":
       return [];
-    case 'pop':
+    case "pop":
       return LinePaths.slice(0, -1);
     default:
       return LinePaths;
@@ -18,22 +23,22 @@ const LinePathReducer = (LinePaths, action) => {
 export const useLinePathContext = () => {
   const ctx = useContext(LinePathContext);
   if (ctx === null) {
-    throw new Error('No LinePath context found');
+    throw new Error("No LinePath context found");
   }
-  const {LinePaths, dispatch} = ctx;
+  const { LinePaths, dispatch } = ctx;
   const addLinePath = useCallback(
     LinePath => {
-      dispatch({type: 'add', LinePath});
+      dispatch({ type: "add", LinePath });
     },
     [dispatch],
   );
   const clearLinePaths = useCallback(() => {
-    dispatch({type: 'clear'});
+    dispatch({ type: "clear" });
   }, [dispatch]);
 
   const popLinePath = useCallback(
     LinePath => {
-      dispatch({type: 'pop', LinePath});
+      dispatch({ type: "pop", LinePath });
     },
     [dispatch],
   );
@@ -46,10 +51,10 @@ export const useLinePathContext = () => {
   };
 };
 
-export const LinePathProvider = ({children}) => {
+export const LinePathProvider = ({ children }) => {
   const [LinePaths, dispatch] = useReducer(LinePathReducer, []);
   return (
-    <LinePathContext.Provider value={{LinePaths, dispatch}}>
+    <LinePathContext.Provider value={{ LinePaths, dispatch }}>
       {children}
     </LinePathContext.Provider>
   );

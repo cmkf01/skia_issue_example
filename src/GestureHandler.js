@@ -1,21 +1,21 @@
-import {Skia, vec} from '@shopify/react-native-skia';
-import React, {useRef} from 'react';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import { Skia, vec } from "@shopify/react-native-skia";
+import React, { useRef } from "react";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-} from 'react-native-reanimated';
-import {toM4, translate, scale} from './MatrixHelpers';
-import {paint} from './Paint';
-import {useLinePathContext} from './LinePathContext';
+} from "react-native-reanimated";
+import { toM4, translate, scale } from "./MatrixHelpers";
+import { paint } from "./Paint";
+import { useLinePathContext } from "./LinePathContext";
 
-const GestureHandler = ({matrix, dimensions, debug}) => {
-  const {x, y, width, height} = dimensions;
+const GestureHandler = ({ matrix, dimensions, debug }) => {
+  const { x, y, width, height } = dimensions;
   const origin = useSharedValue(Skia.Point(0, 0));
   const offset = useSharedValue(Skia.Matrix());
   const currentPath = useRef(Skia.Path.Make());
 
-  const {addLinePath} = useLinePathContext();
+  const { addLinePath } = useLinePathContext();
 
   const pan = Gesture.Pan()
     .minPointers(2)
@@ -54,18 +54,18 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
 
   const style = useAnimatedStyle(() => {
     return {
-      position: 'absolute',
+      position: "absolute",
       left: x,
       top: y,
       width,
       height,
-      backgroundColor: debug ? 'rgba(100, 200, 300, 0.4)' : 'transparent',
+      backgroundColor: debug ? "rgba(100, 200, 300, 0.4)" : "transparent",
       transform: [
-        {translateX: -width / 2},
-        {translateY: -height / 2},
-        {matrix: toM4(matrix.value)},
-        {translateX: width / 2},
-        {translateY: height / 2},
+        { translateX: -width / 2 },
+        { translateY: -height / 2 },
+        { matrix: toM4(matrix.value) },
+        { translateX: width / 2 },
+        { translateY: height / 2 },
       ],
     };
   });
