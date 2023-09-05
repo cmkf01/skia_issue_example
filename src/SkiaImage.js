@@ -7,7 +7,6 @@ import {
   Path,
   useCanvasRef,
   Group,
-  Text,
 } from "@shopify/react-native-skia";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { Picture, PictureDimensions } from "./Picture";
