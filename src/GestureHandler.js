@@ -48,6 +48,7 @@ const GestureHandler = ({ matrix, dimensions, debug }) => {
         paint: paint,
         bounds: currentPath.current.getBounds(),
       };
+
       addLinePath(pathToDraw);
       currentPath.current = Skia.Path.Make();
     });

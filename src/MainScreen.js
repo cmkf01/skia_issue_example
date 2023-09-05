@@ -7,7 +7,7 @@ import { SkiaView } from "@shopify/react-native-skia";
 const MainScreen = () => {
   const image = require("./zurich.jpg");
   const { clearLinePaths, popLinePath } = useLinePathContext();
-
+  //use a SkiaView in order to make a snapshot of the canvas
   return (
     <>
       <SkiaView style={styles.container}>
