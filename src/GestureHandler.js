@@ -5,12 +5,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import {
-  toM4,
-  translate,
-  scale,
-  transformPointWithInvertedMatrix,
-} from './MatrixHelpers';
+import {toM4, translate, scale} from './MatrixHelpers';
 import {paint} from './Paint';
 import {useLinePathContext} from './LinePathContext';
 
@@ -18,12 +13,11 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
   const {x, y, width, height} = dimensions;
   const origin = useSharedValue(Skia.Point(0, 0));
   const offset = useSharedValue(Skia.Matrix());
-  const currentPath = useRef(null);
+  const currentPath = useRef(Skia.Path.Make());
 
   const {addLinePath} = useLinePathContext();
 
   const pan = Gesture.Pan()
-    .averageTouches(true)
     .minPointers(2)
     .onChange(e => {
       matrix.value = translate(matrix.value, e.changeX, e.changeY);
@@ -43,29 +37,19 @@ const GestureHandler = ({matrix, dimensions, debug}) => {
     .minPointers(1)
     .maxPointers(1)
     .onStart(e => {
-      const [transformedX, transformedY] = transformPointWithInvertedMatrix(
-        matrix.value,
-        e.x,
-        e.y,
-      );
-      currentPath.current = Skia.Path.Make();
-      currentPath.current.moveTo(transformedX, transformedY);
+      currentPath.current.moveTo(e.x, e.y);
     })
     .onChange(e => {
-      const [transformedX, transformedY] = transformPointWithInvertedMatrix(
-        matrix.value,
-        e.x,
-        e.y,
-      );
-      console.log('transformedX', transformedX, 'transformedY', transformedY);
-      currentPath.current.lineTo(transformedX, transformedY);
+      currentPath.current.lineTo(e.x, e.y);
     })
     .onEnd(() => {
-      const pathToDraw = {path: currentPath.current, paint: paint};
+      const pathToDraw = {
+        path: currentPath.current,
+        paint: paint,
+        bounds: currentPath.current.getBounds(),
+      };
       addLinePath(pathToDraw);
-    })
-    .onFinalize(() => {
-      currentPath.current = null;
+      currentPath.current = Skia.Path.Make();
     });
 
   const style = useAnimatedStyle(() => {

@@ -32,6 +32,13 @@ export const translate = (matrix, x, y) => {
   return m;
 };
 
+export const move = (x, y) => {
+  'worklet';
+  const p = Skia.Path.Make();
+  p.moveTo(x, y);
+  return p;
+};
+
 export const toM4 = m3 => {
   'worklet';
   const decomposedMatrix = decomposeMatrix(m3.get());
@@ -57,46 +64,45 @@ export const toM4 = m3 => {
   ];
 };
 
-let lastMatrix = null;
-let cachedInverse = null;
+// let lastMatrix = null;
+// let cachedInverse = null;
 
-export const invertMatrix = matrix => {
-  'worklet';
-  // so the inverse matrix is not calculated every frame of .onChange()
-  if (lastMatrix && lastMatrix === matrix) {
-    return cachedInverse;
-  }
+// export const invertMatrix = matrix => {
+//   // so the inverse matrix is not calculated every frame of .onChange()
+//   if (lastMatrix && lastMatrix === matrix) {
+//     return cachedInverse;
+//   }
 
-  const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(matrix.get());
-  console.log('Matrix decomposed if sx:', sx);
-  const det = sx * sy - skewY * skewX;
-  if (Math.abs(det) < 1e-10) {
-    return null; // matrix is not invertible
-  }
-  const invDet = 1.0 / det;
-  const inv = [
-    sy * invDet,
-    -skewY * invDet,
-    -skewX * invDet,
-    sx * invDet,
-    (skewX * ty - sy * tx) * invDet,
-    (skewY * tx - sx * ty) * invDet,
-    0,
-    0,
-    1,
-  ];
-  const invertedSkMatrix = Skia.Matrix();
-  invertedSkMatrix.concat(inv);
-  console.log(typeof invertedSkMatrix);
+//   const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(matrix.get());
+//   console.log('Matrix decomposed if sx:', sx);
+//   const det = sx * sy - skewY * skewX;
+//   if (Math.abs(det) < 1e-10) {
+//     return null; // matrix is not invertible
+//   }
+//   const invDet = 1.0 / det;
+//   const inv = [
+//     sy * invDet,
+//     -skewY * invDet,
+//     -skewX * invDet,
+//     sx * invDet,
+//     (skewX * ty - sy * tx) * invDet,
+//     (skewY * tx - sx * ty) * invDet,
+//     0,
+//     0,
+//     1,
+//   ];
+//   const invertedSkMatrix = Skia.Matrix();
+//   invertedSkMatrix.concat(inv);
+//   console.log(typeof invertedSkMatrix);
 
-  lastMatrix = matrix;
-  cachedInverse = invertedSkMatrix;
+//   lastMatrix = matrix;
+//   cachedInverse = invertedSkMatrix;
 
-  return invertedSkMatrix;
-};
+//   return invertedSkMatrix;
+// };
 
-export const transformPointWithInvertedMatrix = (matrix, x, y) => {
-  const invertedMatrix = invertMatrix(matrix);
-  const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(invertedMatrix.get());
-  return [sx * x + skewX * y + tx, skewY * x + sy * y + ty];
-};
+// export const transformPointWithInvertedMatrix = (matrix, x, y) => {
+//   const invertedMatrix = invertMatrix(matrix);
+//   const {sx, skewY, skewX, sy, tx, ty} = decomposeMatrix(invertedMatrix.get());
+//   return [sx * x + skewX * y + tx, skewY * x + sy * y + ty];
+// };

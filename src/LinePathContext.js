@@ -8,6 +8,8 @@ const LinePathReducer = (LinePaths, action) => {
       return [...LinePaths, action.LinePath];
     case 'clear':
       return [];
+    case 'pop':
+      return LinePaths.slice(0, -1);
     default:
       return LinePaths;
   }
@@ -29,10 +31,18 @@ export const useLinePathContext = () => {
     dispatch({type: 'clear'});
   }, [dispatch]);
 
+  const popLinePath = useCallback(
+    LinePath => {
+      dispatch({type: 'pop', LinePath});
+    },
+    [dispatch],
+  );
+
   return {
     LinePaths,
     addLinePath,
     clearLinePaths,
+    popLinePath,
   };
 };
 
