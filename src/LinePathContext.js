@@ -58,7 +58,7 @@ export const useLinePathContext = () => {
         const snapshots = bounds
           .map(bound => {
             const snapshot = canvasRef.current?.makeImageSnapshot(bound);
-            return snapshot ? snapshot.encodeToBase64() : null;
+            return snapshot;
           })
           .filter(Boolean);
         dispatch({ type: "add-snapshots", payload: snapshots });
