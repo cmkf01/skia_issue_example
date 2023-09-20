@@ -5,7 +5,6 @@ import {
   useImage,
   Skia,
   Path,
-  useCanvasRef,
   Group,
   Rect,
 } from "@shopify/react-native-skia";
@@ -16,20 +15,17 @@ import { useLinePathContext } from "./LinePathContext";
 
 const { width, height } = Dimensions.get("window");
 
-const SkiaImage = ({ style, imageUri }) => {
-  const ref = useCanvasRef();
-  const { LinePaths } = useLinePathContext();
+const SkiaImage = ({ style, imageUri, canvasRef }) => {
+  const { linePaths } = useLinePathContext();
 
   const skImage = useImage(imageUri);
-
   const pictureMatrix = useSharedValue(Skia.Matrix());
 
   //for debugging
   const rectPaint = Skia.Paint();
   rectPaint.setColor(Skia.Color("yellow"));
   rectPaint.setAlphaf(0.5);
-
-  // need to consider slop around bbox to ensure text is captured
+  // for debugging
 
   if (!skImage) {
     return null;
@@ -37,15 +33,15 @@ const SkiaImage = ({ style, imageUri }) => {
   return (
     <Animated.View style={style}>
       <Canvas
-        ref={ref}
+        ref={canvasRef}
         style={{
           width,
           height,
         }}>
         <Picture image={skImage} matrix={pictureMatrix} />
         <Group matrix={pictureMatrix}>
-          {Array.isArray(LinePaths) &&
-            LinePaths.map((linePath, index) => (
+          {Array.isArray(linePaths) &&
+            linePaths.map((linePath, index) => (
               <React.Fragment key={index}>
                 <Path
                   key={`${index}-path`}
@@ -58,6 +54,7 @@ const SkiaImage = ({ style, imageUri }) => {
                   rect={linePath.bounds}
                   paint={rectPaint}
                 />
+                {/* for debugging */}
               </React.Fragment>
             ))}
         </Group>
@@ -71,5 +68,3 @@ const SkiaImage = ({ style, imageUri }) => {
   );
 };
 export default SkiaImage;
-
-// LOG  {"__typename__": "\"Rect\"", "dispose": [Function dispose], "height": 44.81243896484375, "setLTRB": [Function setLTRB], "setXYWH": [Function setXYWH], "width": 61.234649658203125, "x": 95.27076721191406, "y": 295.2686767578125}
