@@ -1,4 +1,4 @@
-# Instuctions
+# Instructions
 
 cd skia_issue_example
 
