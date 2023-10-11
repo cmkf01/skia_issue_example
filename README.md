@@ -2,4 +2,6 @@
 
 cd skia_issue_example
 
-npx react-native start
+npm install
+
+npx react-native run-android
