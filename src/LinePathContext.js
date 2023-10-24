@@ -50,6 +50,7 @@ export const useLinePathContext = () => {
   }, [dispatch]);
 
   const getSnapshots = ({ canvasRef }) => {
+    console.log("Inside getSnapshots: ", canvasRef.current !== null);
     try {
       if (state.linePaths.length > 0) {
         const bounds = state.linePaths.map(linePath =>
@@ -61,6 +62,7 @@ export const useLinePathContext = () => {
             return snapshot;
           })
           .filter(Boolean);
+        console.log(snapshots);
         dispatch({ type: "add-snapshots", payload: snapshots });
       }
     } catch (err) {

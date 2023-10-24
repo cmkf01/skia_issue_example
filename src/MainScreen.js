@@ -5,8 +5,9 @@ import { SkiaView, useCanvasRef } from "@shopify/react-native-skia";
 import { useLinePathContext } from "./LinePathContext";
 
 const MainScreen = ({ navigation }) => {
-  const { clearLinePaths, getSnapshots } = useLinePathContext();
+  const { clearLinePaths, getSnapshots, linePaths } = useLinePathContext();
   const canvasRef = useCanvasRef();
+  console.log("After invocation of useCanvasRef: ", canvasRef.current !== null);
   const image = require("./zurich.jpg");
   return (
     <>
@@ -28,8 +29,13 @@ const MainScreen = ({ navigation }) => {
         <Button
           title="Snapshot"
           onPress={() => {
-            console.log("Snapshot!");
-            getSnapshots({ canvasRef });
+            console.log("Snapshot!", canvasRef.current);
+            try {
+              console.log("inside try block", linePaths.length);
+              getSnapshots({ canvasRef });
+            } catch (e) {
+              console.log(e);
+            }
           }}
         />
         <Button
