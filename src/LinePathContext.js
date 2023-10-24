@@ -20,7 +20,7 @@ const LinePathReducer = (state, action) => {
         snapshots: state.snapshots.slice(0, -1),
       };
     case "add-snapshots":
-      return { ...state, snapshots: [...state.snapshots, ...action.payload] };
+      return { ...state, snapshots: [...action.payload] };
     default:
       return state;
   }

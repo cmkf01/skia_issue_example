@@ -34,7 +34,7 @@ const MainScreen = ({ navigation }) => {
         />
         <Button
           title="Secondary"
-          onPress={() => navigation.push("Secondary")}
+          onPress={() => navigation.navigate("Secondary")}
         />
       </View>
     </>
