@@ -1,4 +1,4 @@
-import { Skia, MatrixIndex } from "@shopify/react-native-skia";
+import { MatrixIndex, notifyChange } from "@shopify/react-native-skia";
 
 const decomposeMatrix = matrix => {
   "worklet";
@@ -15,28 +15,22 @@ const decomposeMatrix = matrix => {
   };
 };
 
-export const scale = (matrix, s, origin) => {
+export const scale = (matrix, offset, s, origin) => {
   "worklet";
-  const source = Skia.Matrix(matrix.get());
+  const source = matrix.value;
+  source.identity();
+  source.concat(offset);
   source.translate(origin.x, origin.y);
   source.scale(s, s);
   source.translate(-origin.x, -origin.y);
-  return source;
+  notifyChange(matrix);
 };
 
 export const translate = (matrix, x, y) => {
   "worklet";
-  const m = Skia.Matrix();
-  m.translate(x, y);
-  m.concat(matrix);
-  return m;
-};
-
-export const move = (x, y) => {
-  "worklet";
-  const p = Skia.Path.Make();
-  p.moveTo(x, y);
-  return p;
+  const source = matrix.value;
+  source.postTranslate(x, y);
+  notifyChange(matrix);
 };
 
 export const toM4 = m3 => {

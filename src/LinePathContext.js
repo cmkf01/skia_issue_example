@@ -13,12 +13,6 @@ const LinePathReducer = (state, action) => {
       return { ...state, linePaths: [...state.linePaths, action.payload] };
     case "clear":
       return { ...state, linePaths: [], snapshots: [] };
-    case "pop":
-      return {
-        ...state,
-        linePaths: state.linePaths.slice(0, -1),
-        snapshots: state.snapshots.slice(0, -1),
-      };
     case "add-snapshots":
       return { ...state, snapshots: [...action.payload] };
     default:
@@ -42,16 +36,15 @@ export const useLinePathContext = () => {
 
   const clearLinePaths = useCallback(() => {
     dispatch({ type: "clear" });
-    console.log(state.linePaths.length);
-  }, [dispatch, state.linePaths]);
-
-  const popLinePath = useCallback(() => {
-    dispatch({ type: "pop" });
   }, [dispatch]);
 
-  const getSnapshots = ({ canvasRef }) => {
+  const takeSnapshots = ({ canvasRef }) => {
     try {
       if (state.linePaths.length > 0) {
+        console.log(
+          "context/func takeSnapshots: state.linePaths.length = ",
+          state.linePaths.length,
+        );
         const bounds = state.linePaths.map(linePath =>
           linePath.path.getBounds(),
         );
@@ -73,8 +66,7 @@ export const useLinePathContext = () => {
     snapshots: state.snapshots,
     addLinePath,
     clearLinePaths,
-    popLinePath,
-    getSnapshots,
+    takeSnapshots,
   };
 };
 
