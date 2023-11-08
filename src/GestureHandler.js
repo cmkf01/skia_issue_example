@@ -1,5 +1,5 @@
-import { Skia } from "@shopify/react-native-skia";
-import React, { useRef } from "react";
+import { Skia, notifyChange } from "@shopify/react-native-skia";
+import React from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -8,29 +8,24 @@ import Animated, {
 } from "react-native-reanimated";
 import { toM4 } from "./MatrixHelpers";
 import { paint } from "./Paint";
-import { useLinePathContext } from "./LinePathContext";
 
-const GestureHandler = ({ matrix, dimensions, debug }) => {
+const GestureHandler = ({ matrix, dimensions, debug, addLinePath }) => {
   const { x, y, width, height } = dimensions;
   const currentPath = useSharedValue(Skia.Path.Make());
 
-  const { addLinePath } = useLinePathContext();
-
   const drawGesture = Gesture.Pan()
-    .runOnJS(true)
-    .minPointers(1)
-    .maxPointers(1)
-    .onBegin(e => {
+    .onStart(e => {
       currentPath.value.moveTo(e.x, e.y);
+      notifyChange(currentPath);
     })
     .onChange(e => {
       currentPath.value.lineTo(e.x, e.y);
+      notifyChange(currentPath);
     })
     .onEnd(() => {
       const pathToDraw = {
         path: currentPath.value,
         paint: paint,
-        bounds: currentPath.value.getBounds(),
       };
       runOnJS(addLinePath)(pathToDraw);
       currentPath.value = Skia.Path.Make();
