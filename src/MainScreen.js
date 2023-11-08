@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import SkiaImage from "./SkiaImage";
-import { useCanvasRef } from "@shopify/react-native-skia";
 import { useLinePathContext } from "./LinePathContext";
 
 const MainScreen = ({ navigation }) => {
   const { clearLinePaths, takeSnapshots } = useLinePathContext();
-  const canvasRef = useCanvasRef();
+  const canvasRef = useRef();
   const image = require("./zurich.jpg");
   return (
     <>
