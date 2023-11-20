@@ -1,4 +1,9 @@
-import { MatrixIndex, notifyChange } from "@shopify/react-native-skia";
+import {
+  MatrixIndex,
+  Skia,
+  notifyChange,
+  rect,
+} from "@shopify/react-native-skia";
 
 const decomposeMatrix = matrix => {
   "worklet";
@@ -56,4 +61,74 @@ export const toM4 = m3 => {
     persp2,
     1,
   ];
+};
+
+const getImageDimensions = skImage => {
+  "worklet";
+  const imageWidth = skImage.width();
+  const imageHeight = skImage.height();
+  return { imageWidth, imageHeight };
+};
+
+export const createOffscreenSnapshot = (
+  skImage,
+  bound,
+  windowWidth,
+  windowHeight,
+) => {
+  "worklet";
+  const { imageWidth, imageHeight } = getImageDimensions(skImage);
+  const { x, y, width: boundWidth, height: boundHeight } = bound;
+
+  console.log("Window Width:", windowWidth, "Height:", windowHeight);
+  console.log("Image Width:", imageWidth, "Height:", imageHeight);
+
+  const windowAspectRatio = windowWidth / windowHeight;
+  const imageAspectRatio = imageWidth / imageHeight;
+
+  console.log("Window Aspect Ratio:", windowAspectRatio);
+  console.log("Image Aspect Ratio:", imageAspectRatio);
+
+  let effectiveWidth, effectiveHeight;
+
+  if (imageAspectRatio > windowAspectRatio) {
+    // Image is wider than screen
+    effectiveWidth = windowWidth;
+    effectiveHeight = windowWidth / imageAspectRatio;
+  } else {
+    // Image is taller than screen
+    effectiveWidth = windowHeight * imageAspectRatio;
+    effectiveHeight = windowHeight;
+  }
+
+  console.log("Effective Width:", effectiveWidth, "Height:", effectiveHeight);
+
+  const scaleFactorWidth = imageWidth / effectiveWidth - 2.5;
+  const scaleFactorHeight = imageHeight / effectiveHeight;
+
+  console.log(
+    "Scale Factor Width:",
+    scaleFactorWidth,
+    "Height:",
+    scaleFactorHeight,
+  );
+
+  const transformedBound = rect(
+    x * scaleFactorWidth,
+    y * scaleFactorHeight,
+    boundWidth * scaleFactorWidth,
+    boundHeight * scaleFactorHeight,
+  );
+
+  console.log("Original Bounds:", bound);
+  console.log("Transformed Bounds:", transformedBound);
+
+  const surface = Skia.Surface.Make(imageWidth, imageHeight);
+  if (!surface) {
+    throw new Error("Couldn't load the image");
+  }
+  const canvas = surface.getCanvas();
+  canvas.drawImage(skImage, 0, 0);
+  surface.flush();
+  return surface.makeImageSnapshot(transformedBound);
 };

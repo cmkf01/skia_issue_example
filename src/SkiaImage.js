@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions } from "react-native";
 import {
   Canvas,
   useImage,
@@ -21,13 +21,14 @@ const SkiaImage = ({ imageUri, canvasRef }) => {
 
   const skImage = useImage(imageUri);
   const pictureMatrix = useSharedValue(Skia.Matrix());
+  const size = useSharedValue({ width: 0, height: 0 });
 
   if (!skImage) {
     return null;
   }
   return (
-    <View>
-      <Canvas ref={canvasRef} style={{ height }}>
+    <>
+      <Canvas ref={canvasRef} onSize={size} style={{ flex: 1 }}>
         <Group matrix={pictureMatrix}>
           <Image
             x={0}
@@ -35,7 +36,7 @@ const SkiaImage = ({ imageUri, canvasRef }) => {
             width={width}
             height={height}
             image={skImage}
-            fit="contain"
+            fit="cover"
           />
         </Group>
         <Group matrix={pictureMatrix}>
@@ -54,7 +55,7 @@ const SkiaImage = ({ imageUri, canvasRef }) => {
         dimensions={rect(0, 0, width, height)}
         debug={true}
       />
-    </View>
+    </>
   );
 };
 export default SkiaImage;

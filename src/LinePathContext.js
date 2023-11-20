@@ -4,6 +4,7 @@ import React, {
   useContext,
   useReducer,
 } from "react";
+import { createOffscreenSnapshot } from "./MatrixHelpers";
 
 const LinePathContext = createContext(null);
 
@@ -38,7 +39,7 @@ export const useLinePathContext = () => {
     dispatch({ type: "clear" });
   }, [dispatch]);
 
-  const takeSnapshots = ({ canvasRef }) => {
+  const takeSnapshots = (image, width, height) => {
     try {
       if (state.linePaths.length > 0) {
         console.log(
@@ -50,7 +51,12 @@ export const useLinePathContext = () => {
         );
         const snapshots = bounds
           .map(bound => {
-            const snapshot = canvasRef.current?.makeImageSnapshot(bound);
+            const snapshot = createOffscreenSnapshot(
+              image,
+              bound,
+              width,
+              height,
+            );
             return snapshot;
           })
           .filter(Boolean);
