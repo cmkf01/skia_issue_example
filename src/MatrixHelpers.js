@@ -102,8 +102,12 @@ export const createOffscreenSnapshot = (
   }
 
   console.log("Effective Width:", effectiveWidth, "Height:", effectiveHeight);
-
+  // these issues are to do with fit of the rendered image not matrix trasnform
+  // -2.5 is roughly correct horizontal offset regardless of distance from centre
+  // when image is "fill" scaled
   const scaleFactorWidth = imageWidth / effectiveWidth - 2.5;
+  // lower half of image needs negative offset +/-0.75 is roughly correct
+  // vertical offset distance from centre but inreases as further from centre
   const scaleFactorHeight = imageHeight / effectiveHeight;
 
   console.log(
@@ -123,7 +127,7 @@ export const createOffscreenSnapshot = (
   console.log("Original Bounds:", bound);
   console.log("Transformed Bounds:", transformedBound);
 
-  const surface = Skia.Surface.Make(imageWidth, imageHeight);
+  const surface = Skia.Surface.MakeOffscreen(imageWidth, imageHeight);
   if (!surface) {
     throw new Error("Couldn't load the image");
   }

@@ -21,14 +21,13 @@ const SkiaImage = ({ imageUri, canvasRef }) => {
 
   const skImage = useImage(imageUri);
   const pictureMatrix = useSharedValue(Skia.Matrix());
-  const size = useSharedValue({ width: 0, height: 0 });
 
   if (!skImage) {
     return null;
   }
   return (
     <>
-      <Canvas ref={canvasRef} onSize={size} style={{ flex: 1 }}>
+      <Canvas ref={canvasRef} style={{ flex: 1, height: 4500, width: 3000 }}>
         <Group matrix={pictureMatrix}>
           <Image
             x={0}
@@ -36,7 +35,7 @@ const SkiaImage = ({ imageUri, canvasRef }) => {
             width={width}
             height={height}
             image={skImage}
-            fit="cover"
+            fit="fill"
           />
         </Group>
         <Group matrix={pictureMatrix}>
